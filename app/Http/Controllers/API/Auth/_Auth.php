@@ -22,12 +22,9 @@ class _Auth extends Controller
 
             $user = User::where('email', $request->email)->first();
 
-            if (! $user || ! Hash::check($request->password, $user->password)) {
-                // throw ValidationException::withMessages([
-                //     'email' => ['The provided credentials are incorrect.'],
-                // ]);
+            if (!$user || !Hash::check($request->password, $user->password)) {
                 return response()->json([
-                    'code'=> 201,
+                    'status' => 401,
                     'type' => 'error',
                     'title' => 'Feedback 👋',
                     'message' => '❌ The provided credentials are incorrect'
@@ -35,12 +32,19 @@ class _Auth extends Controller
             }
 
             return [
-                'user' => $user,
-                'token' => $user->createToken('login-token')->plainTextToken
+                'status' => 200,
+                'type' => 'success',
+                'title' => 'Feedback 👋',
+                'message' => '✅ Everything is ok',
+                'data' => [
+                    'user' => $user,
+                    'token' => $user->createToken('login-token')->plainTextToken
+
+                ]
             ];
         } catch (\Throwable $th) {
             return response()->json([
-                'code'=> 500,
+                'status' => 500,
                 'type' => 'error',
                 'title' => 'Feedback 👋',
                 'message' => '❌ Internal server error'
